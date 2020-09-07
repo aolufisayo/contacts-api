@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from app.db import database, engine, metadata
+from app.db import engine, metadata, database
+from app.api import contacts
 
 metadata.create_all(engine)
 
@@ -12,3 +13,6 @@ async def startup():
 @app.on_event("shutdown")
 async def shutdown():
     await database.disconnect()
+
+
+app.include_router(contacts.router, prefix="/contacts", tags=["contacts"])
