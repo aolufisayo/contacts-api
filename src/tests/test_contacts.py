@@ -15,3 +15,31 @@ def test_create_new_contact(test_app, monkeypatch):
     assert response.status_code == 201
     assert response.json() == test_response_payload
 
+def test_create_new_contact_inavlid_json(test_app):
+    response = test_app.post("/contacts/", data=json.dumps({"first_name": "1"}))
+    assert response.status_code == 422
+
+def test_read_contact(test_app, monkeypatch):
+    test_data = {"id": 1, "first_name": "johhny", "last_name": "bravo"}
+
+    async def mock_get(id):
+        return test_data
+
+    monkeypatch.setattr(crud, "get", mock_get)
+
+    response = test_app.get("/contacts/1")
+    assert response.status_code == 200
+    assert response.json() == test_data
+
+def test_read_contact_incorrect_id(test_app, monkeypatch):
+    async def mock_get(id):
+        return None
+
+    monkeypatch.setattr(crud, "get", mock_get)
+
+    response = test_app.get("/contacts/1000")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Contact Not Found"
+
+    response = test_app.get("/contacts/0")
+    assert response.status_code == 422
