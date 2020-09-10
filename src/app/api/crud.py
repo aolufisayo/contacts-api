@@ -8,3 +8,7 @@ async def post(payload: ContactSchema):
 async def get(id: int):
     query = contacts.select().where(id == contacts.c.id)
     return await database.fetch_one(query=query)
+
+async def get_all():
+    query = contacts.select()
+    return await database.fetch_all(query=query)

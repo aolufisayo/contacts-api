@@ -43,3 +43,18 @@ def test_read_contact_incorrect_id(test_app, monkeypatch):
 
     response = test_app.get("/contacts/0")
     assert response.status_code == 422
+
+def test_read_all_contacts(test_app, monkeypatch):
+    test_data = [
+        {"id": 1, "first_name": "joseph", "last_name": "hughes"},
+        {"id": 2, "first_name": "bridget", "last_name": "jones"}
+    ]
+
+    async def mock_get_all():
+        return test_data
+
+    monkeypatch.setattr(crud, "get_all", mock_get_all)
+
+    response = test_app.get("/contacts/")
+    assert response.status_code == 200
+    assert response.json() == test_data

@@ -23,3 +23,6 @@ async def read_contact(id: int = Path(..., gt=0),):
         raise HTTPException(status_code= 404, detail="Contact Not Found")
     return contact
 
+@router.get("/", response_model=List[ContactDB])
+async def read_all_contacts():
+    return await crud.get_all()
