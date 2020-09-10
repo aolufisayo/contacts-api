@@ -12,3 +12,13 @@ async def get(id: int):
 async def get_all():
     query = contacts.select()
     return await database.fetch_all(query=query)
+
+async def put(id: int, payload: ContactSchema):
+    query = (
+        contacts
+        .update()
+        .where(id == contacts.c.id)
+        .values(first_name=payload.first_name, last_name=payload.last_name)
+        .returning(contacts.c.id)
+    )
+    return await database.execute(query=query)
