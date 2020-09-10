@@ -40,3 +40,11 @@ async def update_note(payload: ContactSchema, id: int=Path(..., gt=0),):
         "last_name": payload.last_name
     }
     return response_object
+
+@router.delete("/{id}/", response_model=ContactDB)
+async def delete_contact(id:int=Path(...,gt=0)):
+    contact = await crud.get(id)
+    if not contact:
+        raise HTTPException(status_code= 404, detail="Contact Not Found")
+    await crud.delete(id)
+    return contact
